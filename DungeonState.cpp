@@ -197,18 +197,6 @@ void DungeonState::move(float speed, float deltaTime, Directions::Value directio
 
 }
 
-/*
-void DungeonState::moveForward(float speed, float deltaTime)
-{
-	irr::core::vector3df vec = camera->getTarget() - camera->getPosition();
-	vec.normalize();
-
-	vec = vec * dungeonMap.getScaling() * (deltaTime / speed);
-
-	translateCamera(vec);
-}
-*/
-
 bool DungeonState::isMoveValid(Directions::Value direction)
 {
 	irr::core::vector3df vec = directions.getVector(direction);
@@ -234,23 +222,6 @@ bool DungeonState::isMoveValid(Directions::Value direction)
 		return true;
 	}
 }
-
-/*
-void DungeonState::moveBackward(float speed, float deltaTime)
-{
-	irr::core::vector3df vec = -(camera->getTarget() - camera->getPosition());
-
-	vec.normalize();
-
-	translateCamera(vec * dungeonMap.getScaling());
-
-	// if the player is trying to move into a wall
-	if (!dungeonMap.isWallsPositionEmpty( {camera->getPosition().X, camera->getPosition().Z} ))
-	{
-		translateCamera(-vec * dungeonMap.getScaling());
-	}
-}
-*/
 
 void DungeonState::turnLeft(float speed, float deltaTime)
 {
