@@ -12,6 +12,8 @@
 
 #include <SFML/Audio.hpp>
 
+#include <uberswitch/uberswitch.hpp>
+
 DungeonMap::DungeonMap(irr::IrrlichtDevice &device, const std::string &mapPath)
 {
 	using namespace irr;
@@ -28,148 +30,149 @@ void DungeonMap::loadDungeonFile(const std::string &mapPath)
 
 	std::string token;
 	
-	// Get the information about the map
-	// I would have used a switch statement but it doesn't support strings
-	// I tried using stoi but it doesn't take that and I tried using an enum and then realized
-	// I'll need to use if/else to convert the string to the enum value... so I guess this is how we're doing it
+	// Thank you falmagn for making uberswitch
+	// C++ really should have some sort of switch for strings.
+	// Not sure how you're supposed to do file parsing like this without either a switch or a massive else if chain.
 	while (myfile >> token)
 	{
-		// TODO this else if chain is ridiculous but I can't use a switch with a string (thanks C++)
-		// we need to do something about this because its disgusting
-		if (token == "#comment")
+		uberswitch(token)
 		{
-			while (myfile >> token)
-			{
-				if (token == "#comment")
+			case ("#comment"):
+				while (myfile >> token)
 				{
-					break;
+					if (token == "#comment")
+					{
+						break;
+					}
 				}
-			}
-		}
-		else if (token == "width")
-		{
-			myfile >> width;
-		}
-		else if (token == "height")
-		{
-			myfile >> height;
-		}
-		else if (token == "scaling")
-		{
-			myfile >> scaling;
-		}
-		else if (token == "texturePath")
-		{
-			myfile >> texturePath;
-		}
-		else if (token == "textureExtension")
-		{
-			myfile >> textureExtension;
-		}
-		else if (token == "cameraHeight")
-		{
-			myfile >> cameraHeight;
-		}
-		else if (token == "skyboxPath")
-		{
-			myfile >> skyboxPath;
-		}
-		else if (token == "skyboxExtension")
-		{
-			myfile >> skyboxExtension;
-		}
-		else if (token == "turnSpeed")
-		{
-			myfile >> turnSpeed;
-		}
-		else if (token == "moveSpeed")
-		{
-			myfile >> moveSpeed;
-		}
-		else if (token == "wallBumpSpeed")
-		{
-			myfile >> wallBumpSpeed;
-		}
-		else if (token == "wallBumpDistance")
-		{
-			myfile >> wallBumpDistance;
-		}
-		else if (token == "start")
-		{
-			int x, z;
-			std::string tempFacing;
-			myfile >> x >> z;
-			myfile >> tempFacing;
+				break;
 
-			startPosition = irr::core::vector3df({x * scaling, cameraHeight * scaling, z * -scaling});
+			case ("width"):
+				myfile >> width;
+				break;
+
+			case ("height"):
+				myfile >> height;
+				break;
+
+			case("scaling"):
+				myfile >> scaling;
+				break;
 			
-			if (tempFacing == "north")
-			{
-				startFacing = Directions::Value::North;
-			}
-			else if (tempFacing == "south")
-			{
-				startFacing = Directions::Value::South;
-			}
-			else if (tempFacing == "east")
-			{
-				startFacing = Directions::Value::East;
-			}
-			else if (tempFacing == "west")
-			{
-				startFacing = Directions::Value::West;
-			}
-		}
-		// fill in the vectors based on the width and height
-		else if (token == "walls")
-		{
-			for (int r = 0; r < height; r++)
-			{
-				walls.push_back(std::vector<int>());
+			case ("texturePath"):
+				myfile >> texturePath;
+				break;
 
-				for (int c = 0; c < width; c++)
+			case ("textureExtension"):
+				myfile >> textureExtension;
+				break;
+			
+			case ("cameraHeight"):
+				myfile >> cameraHeight;
+				break;
+
+			case ("skyboxPath"):
+				myfile >> skyboxPath;
+				break;
+		
+			case ("skyboxExtension"):
+				myfile >> skyboxExtension;
+				break;
+			
+			case ("turnSpeed"):
+				myfile >> turnSpeed;
+				break;
+			
+			case ("moveSpeed"):
+				myfile >> moveSpeed;
+				break;
+
+			case ("wallBumpSpeed"):
+				myfile >> wallBumpSpeed;
+				break;
+			
+			case ("wallBumpDistance"):
+				myfile >> wallBumpDistance;
+				break;
+			
+			case ("start"):
+				int x, z;
+
+				myfile >> x >> z;
+				myfile >> token; // token is now the facing direction
+
+				startPosition = irr::core::vector3df({x * scaling, cameraHeight * scaling, z * -scaling});
+
+				if (token == "north")
 				{
-					int tmp;
-
-					myfile >> tmp;
-					walls[r].push_back(tmp);
+					startFacing = Directions::Value::North;
 				}
-			}
-		}
-		else if (token == "floor")
-		{
-			for (int r = 0; r < height; r++)
-			{
-				floor.push_back(std::vector<int>());
-
-				for (int c = 0; c < width; c++)
+				else if (token == "south")
 				{
-					int tmp;
-
-					myfile >> tmp;
-					floor[r].push_back(tmp);
+					startFacing = Directions::Value::South;
 				}
-			}
-		}
-		else if (token == "ceiling")
-		{
-			for (int r = 0; r < height; r++)
-			{
-				ceiling.push_back(std::vector<int>());
-
-				for (int c = 0; c < width; c++)
+				else if (token == "east")
 				{
-					int tmp;
-
-					myfile >> tmp;
-					ceiling[r].push_back(tmp);
+					startFacing = Directions::Value::East;
 				}
-			}
+				else if (token == "west")
+				{
+					startFacing = Directions::Value::West;
+				}
+				break;
+
+			// fill in the vectors based on the width and height
+			case ("walls"):
+				for (int r = 0; r < height; r++)
+				{
+					walls.push_back(std::vector<int>());
+
+					for (int c = 0; c < width; c++)
+					{
+						int tmp;
+
+						myfile >> tmp;
+						walls[r].push_back(tmp);
+					}
+				}
+				break;
+
+			case ("floor"):
+				for (int r = 0; r < height; r++)
+				{
+					floor.push_back(std::vector<int>());
+
+					for (int c = 0; c < width; c++)
+					{
+						int tmp;
+
+						myfile >> tmp;
+						floor[r].push_back(tmp);
+					}
+				}
+				break;
+
+			case ("ceiling"):
+				for (int r = 0; r < height; r++)
+				{
+					ceiling.push_back(std::vector<int>());
+
+					for (int c = 0; c < width; c++)
+					{
+						int tmp;
+
+						myfile >> tmp;
+						ceiling[r].push_back(tmp);
+					}
+				}
+				break;
+
+			default:
+				break;
 		}
 	}
-
-	
 }
+
 
 void DungeonMap::initializeScene()
 {
