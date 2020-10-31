@@ -25,8 +25,6 @@ void SoundManager::initialize(const std::string& soundsPath)
 	// I'll need to use if/else to convert the string to the enum value... so I guess this is how we're doing it
 	while (myfile >> token)
 	{
-		// TODO this else if chain is ridiculous but I can't use a switch with a string (thanks C++)
-		// we need to do something about this though because its disgusting
 		if (token == "#comment")
 		{
 			while (myfile >> token)
