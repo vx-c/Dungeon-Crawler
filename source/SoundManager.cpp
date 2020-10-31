@@ -8,6 +8,8 @@
 
 #include <map>
 
+#include <uberswitch/uberswitch.hpp>
+
 SoundManager::SoundManager()
 {
 	
@@ -19,52 +21,47 @@ void SoundManager::initialize(const std::string& soundsPath)
 
 	std::string token;
 
-	// Get the information about the map
-	// I would have used a switch statement but it doesn't support strings
-	// I tried using stoi but it doesn't take that and I tried using an enum and then realized
-	// I'll need to use if/else to convert the string to the enum value... so I guess this is how we're doing it
+	std::string path;
+
+	float volume;
+
 	while (myfile >> token)
 	{
-		if (token == "#comment")
+		uberswitch(token)
 		{
-			while (myfile >> token)
-			{
-				if (token == "#comment")
+			case ("#comment"):
+				while (myfile >> token)
 				{
-					break;
+					if (token == "#comment")
+					{
+						break;
+					}
 				}
-			}
-		}
-		else if (token == "bgm")
-		{
-			std::string path;
-			float volume;
-			myfile >> path >> volume;
-			loadMusic(MusicType::bgm, path, volume);
-		}
-		else if (token == "move")
-		{
-			std::string path;
-			float volume;
-			myfile >> path >> volume;
-			loadSound(SoundType::move, path, volume);
-		}
-		else if (token == "turn")
-		{
-			std::string path;
-			float volume;
-			myfile >> path >> volume;
-			loadSound(SoundType::turn, path, volume);
-		}
-		else if (token == "wallBump")
-		{
-			std::string path;
-			float volume;
-			myfile >> path >> volume;
-			loadSound(SoundType::wallBump, path, volume);
+				break;
+
+			case ("bgm"):
+				myfile >> path >> volume;
+				loadMusic(MusicType::bgm, path, volume);
+				break;
+
+			case ("move"):
+				myfile >> path >> volume;
+				loadSound(SoundType::move, path, volume);
+				break;
+
+			case ("turn"):
+				myfile >> path >> volume;
+				loadSound(SoundType::turn, path, volume);
+				break;
+
+			case ("wallBump"):
+				myfile >> path >> volume;
+				loadSound(SoundType::wallBump, path, volume);
+				break;
 		}
 	}
 }
+
 
 void SoundManager::loadSound(SoundType sound, std::string path, float volume)
 {
