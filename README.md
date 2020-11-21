@@ -8,5 +8,6 @@ A project I'm currently working on inspired by traditional first person dungeon 
 4. Run game.exe in the unzipped folder.
 
 # Controls
-Use the arrow keys to move.
+Press the up and down arrow keys to move 1 space forward or backward.
+Press the left and right arrow keys to turn.
 Press escape to close the game.
