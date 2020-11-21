@@ -9,7 +9,7 @@ PauseMenuState::PauseMenuState(irr::IrrlichtDevice &device)
 	this->device = &device;
 }
 
-void PauseMenuState::initializeScene()
+void PauseMenuState::initializeScene(bool totalReset)
 {
 
 }

@@ -21,6 +21,24 @@ Game::Game()
 	lastFPS = 0;
 	lastTime = 0;
 
+	// TODO load this from a save file or something
+	// TEMP for testing we'll hardcode the party here for now
+	party.push_back(PlayerUnit(L"Unit1", Stats(5,3,3,3,5,30)));
+	party.push_back(PlayerUnit(L"Unit2", Stats(5,3,3,3,4,30)));
+	party.push_back(PlayerUnit(L"Unit3", Stats(5,3,3,3,1,30)));
+	party.push_back(PlayerUnit(L"Unit4", Stats(5,3,3,3,2,30)));
+	party.push_back(PlayerUnit(L"Unit5", Stats(5,3,3,3,3,30)));
+
+	party[0].addSkill(Skills::fireball);
+	party[0].addSkill(Skills::firewave);
+	party[1].addSkill(Skills::firewave);
+	party[1].addSkill(Skills::basicAttack);
+	party[2].addSkill(Skills::basicAttack);
+	party[2].addSkill(Skills::firewave);
+	party[3].addSkill(Skills::basicAttack);
+	party[3].addSkill(Skills::fireball);
+	party[4].addSkill(Skills::fireball);
+	party[4].addSkill(Skills::basicAttack);
 }
 
 void Game::initialize() 
@@ -33,10 +51,12 @@ void Game::initialize()
 	device = createDevice(video::EDT_DIRECT3D9, core::dimension2d<u32>(1280, 720), 16, false, false, false, 0); 
 	device->setWindowCaption(L"[Dungeon Crawler]");
 
+//	device->getVideoDriver()->setTextureCreationFlag(ETCF_CREATE_MIP_MAPS, true); // TEMP
+
 	// start the game in the main menu state
 	mainMenuState = new MainMenuState(*device);
 	currentState = mainMenuState;
-	currentState->initializeScene();
+	currentState->initializeScene(true);
 
 	lastFPS = 0;
 
@@ -44,8 +64,8 @@ void Game::initialize()
 	clock.restart();
 	lastTime = clock.getElapsedTime().asSeconds();
 
-	// TODO don't hardcode sounds.txt path
-	soundManager.initialize("mymedia/sounds.txt");
+	// TODO don't hardcode sounds.json path
+	soundManager.initialize("media/sounds.json");
 }
 
 bool Game::isRunning() 
@@ -55,7 +75,9 @@ bool Game::isRunning()
 
 void Game::update()
 {
-//	DEBUG_MODE(printf("update\n"));
+	// TODO settings shouldn't be hardcoded
+	// we start the scene here
+	device->getVideoDriver()->beginScene(true,true, video::SColor(255,20,20,20)); 
 
 	// calculate deltatime
 	float currentTime = clock.getElapsedTime().asSeconds();
@@ -73,11 +95,12 @@ void Game::update()
 	if (nextState != currentState->type())
 	{
 		// reset the next state, we don't want to change the state without resetting this or we will be stuck changing states
-		currentState->resetNextState(); 
+		currentState->readyStateChange();
 
 		DEBUG_MODE(printf("state change\n"));
 
 		// if the current state is finished free up the memory
+		// TODO i may want to make a function or something for this so i'm not repeating the code
 		if (finishedState)
 		{
 			currentState->cleanup();
@@ -114,48 +137,63 @@ void Game::update()
 		}
 
 		// change the current state
+		// TODO i should make a function or something for this so i'm not repeating the code
 		switch (nextState)
 		{
 		case GameStateType::MainMenuState:
+			clearDevice();
 			if (mainMenuState == nullptr)
 			{
 				mainMenuState = new MainMenuState(*device);
+				mainMenuState->initializeScene(true);
 			}
-			clearDevice();
-			mainMenuState->initializeScene();
+			else
+			{
+				mainMenuState->initializeScene(false);
+			}
 			currentState = mainMenuState;
 			break;
 
 		case GameStateType::DungeonState:
+			clearDevice();
 			if (dungeonState == nullptr)
 			{
 				// TODO the dungeonMapPath will need to be variable, don't hardcode things like this.
-				dungeonState = new DungeonState(*device, soundManager, "mymedia/dungeon.txt");
+				dungeonState = new DungeonState(*device, soundManager, "media/dungeon.json");
+				dungeonState->initializeScene(true);
 			}
-			clearDevice();
-			dungeonState->initializeScene();
+			else
+			{
+				dungeonState->initializeScene(false);
+			}
 			currentState = dungeonState;
 			break;
 
 		case GameStateType::BattleState:
+			clearDevice();
 			if (battleState == nullptr)
 			{
-				battleState = new BattleState(*device);
+				battleState = new BattleState(*device, &party);
+				battleState->initializeScene(true);
 			}
-			clearDevice();
-			battleState->initializeScene();
+			else
+			{
+				battleState->initializeScene(false);
+			}
 			currentState = battleState;
 			break;
 
 		case GameStateType::PauseMenuState:
+			clearDevice();
 			if (pauseMenuState == nullptr)
 			{
 				pauseMenuState = new PauseMenuState(*device);
-				clearDevice();
-				pauseMenuState->initializeScene();
+				pauseMenuState->initializeScene(true);
 			}
-			clearDevice();
-			pauseMenuState->initializeScene();
+			else
+			{
+				pauseMenuState->initializeScene(false);
+			}
 			currentState = pauseMenuState;
 			break;
 		}
@@ -195,9 +233,6 @@ void Game::render()
 		running = false;
 		return;
 	}
-
-	// TODO settings shouldn't be hardcoded
-	device->getVideoDriver()->beginScene(true,true, video::SColor(255,100,101,140)); 
 
 	device->getSceneManager()->drawAll();
 	device->getGUIEnvironment()->drawAll();

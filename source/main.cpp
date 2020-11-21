@@ -8,7 +8,7 @@
 
 int main()
 {
-	FreeConsole();
+//	FreeConsole(); // for windows release 
 	
 	Game game = Game();
 

@@ -12,7 +12,9 @@
 
 #include <SFML/Audio.hpp>
 
-#include <uberswitch/uberswitch.hpp>
+#include <json/json.h>
+
+#include "MyJson.h"
 
 DungeonMap::DungeonMap(irr::IrrlichtDevice &device, const std::string &mapPath)
 {
@@ -24,153 +26,83 @@ DungeonMap::DungeonMap(irr::IrrlichtDevice &device, const std::string &mapPath)
 	loadDungeonFile(mapPath);
 }
 
+
 void DungeonMap::loadDungeonFile(const std::string &mapPath)
 {
-	std::ifstream myfile (mapPath);
+	// TODO if you feel like doing something tedious and sort of unnecessary
+	// you can replace these Myjson::checkValid calls with MyJson::get
 
-	std::string token;
-	
-	// Thank you falmagn for making uberswitch
-	// C++ really should have some sort of switch for strings.
-	// Not sure how you're supposed to do file parsing like this without either a switch or a massive else if chain.
-	while (myfile >> token)
-	{
-		uberswitch(token)
-		{
-			case ("#comment"):
-				while (myfile >> token)
-				{
-					if (token == "#comment")
-					{
-						break;
-					}
-				}
-				break;
+	std::ifstream file(mapPath, std::ifstream::binary);
+	Json::Value root;
+	file >> root;
+	file.close();
 
-			case ("width"):
-				myfile >> width;
-				break;
+	width = MyJson::get(root, "width").asInt();
+	height = MyJson::get(root, "height").asInt();
 
-			case ("height"):
-				myfile >> height;
-				break;
+	float scalingXZ = MyJson::get(root, "scalingXZ").asFloat();
+	float scalingY = MyJson::get(root, "scalingY").asFloat();
+	scaling = {scalingXZ, scalingY, scalingXZ};
+	cameraHeight = MyJson::get(root, "cameraHeight").asFloat();
 
-			case("scaling"):
-				myfile >> scaling;
-				break;
-			
-			case ("texturePath"):
-				myfile >> texturePath;
-				break;
+	texturePath = MyJson::get(root, "texturePath").asString();
+	textureExtension = MyJson::get(root, "textureExtension").asString();
 
-			case ("textureExtension"):
-				myfile >> textureExtension;
-				break;
-			
-			case ("cameraHeight"):
-				myfile >> cameraHeight;
-				break;
+	skyboxPath = MyJson::get(root, "skyboxPath").asString();
+	skyboxExtension = MyJson::get(root, "skyboxExtension").asString();
 
-			case ("skyboxPath"):
-				myfile >> skyboxPath;
-				break;
+	turnSpeed = MyJson::get(root, "turnSpeed").asFloat();
+	moveSpeed = MyJson::get(root, "moveSpeed").asFloat();
+
+	wallBumpSpeed = MyJson::get(root, "wallBumpSpeed").asFloat();
+	wallBumpDistance = MyJson::get(root, "wallBumpDistance").asFloat();
+
+	float startPositionX = MyJson::get(root, "startPositionX").asFloat();
+	float startPositionY = MyJson::get(root, "startPositionY").asFloat();
+
+	startPosition = irr::core::vector3df({startPositionX, 0, startPositionY});
+	camStartPosition = {scaling.X * startPositionX, 0, -scaling.Z * startPositionY};
+
+	Directions directions;
+	startFacing = directions.stringToValue(MyJson::get(root, "startFacing").asString());
 		
-			case ("skyboxExtension"):
-				myfile >> skyboxExtension;
-				break;
-			
-			case ("turnSpeed"):
-				myfile >> turnSpeed;
-				break;
-			
-			case ("moveSpeed"):
-				myfile >> moveSpeed;
-				break;
+	// fill in the vectors based on the width and height
+	DEBUG_MODE(MyJson::checkValid(root, "floor"));
+	for (int r = 0, index = 0; r < height; r++)
+	{
+		floor.push_back(std::vector<int>());
 
-			case ("wallBumpSpeed"):
-				myfile >> wallBumpSpeed;
-				break;
-			
-			case ("wallBumpDistance"):
-				myfile >> wallBumpDistance;
-				break;
-			
-			case ("start"):
-				int x, z;
-
-				myfile >> x >> z;
-				myfile >> token; // token is now the facing direction
-
-				startPosition = irr::core::vector3df({x * scaling, cameraHeight * scaling, z * -scaling});
-
-				if (token == "north")
-				{
-					startFacing = Directions::Value::North;
-				}
-				else if (token == "south")
-				{
-					startFacing = Directions::Value::South;
-				}
-				else if (token == "east")
-				{
-					startFacing = Directions::Value::East;
-				}
-				else if (token == "west")
-				{
-					startFacing = Directions::Value::West;
-				}
-				break;
-
-			// fill in the vectors based on the width and height
-			case ("walls"):
-				for (int r = 0; r < height; r++)
-				{
-					walls.push_back(std::vector<int>());
-
-					for (int c = 0; c < width; c++)
-					{
-						int tmp;
-
-						myfile >> tmp;
-						walls[r].push_back(tmp);
-					}
-				}
-				break;
-
-			case ("floor"):
-				for (int r = 0; r < height; r++)
-				{
-					floor.push_back(std::vector<int>());
-
-					for (int c = 0; c < width; c++)
-					{
-						int tmp;
-
-						myfile >> tmp;
-						floor[r].push_back(tmp);
-					}
-				}
-				break;
-
-			case ("ceiling"):
-				for (int r = 0; r < height; r++)
-				{
-					ceiling.push_back(std::vector<int>());
-
-					for (int c = 0; c < width; c++)
-					{
-						int tmp;
-
-						myfile >> tmp;
-						ceiling[r].push_back(tmp);
-					}
-				}
-				break;
-
-			default:
-				break;
+		for (int c = 0; c < width; c++)
+		{
+			floor[r].push_back(root["floor"][index].asInt());
+			index++;
 		}
 	}
+
+	DEBUG_MODE(MyJson::checkValid(root, "ceiling"));
+	for (int r = 0, index = 0; r < height; r++)
+	{
+		ceiling.push_back(std::vector<int>());
+
+		for (int c = 0; c < width; c++)
+		{
+			ceiling[r].push_back(root["ceiling"][index].asInt());
+			index++;
+		}
+	}
+
+	DEBUG_MODE(MyJson::checkValid(root, "walls"));
+	for (int r = 0, index = 0; r < height; r++)
+	{
+		walls.push_back(std::vector<int>());
+
+		for (int c = 0; c < width; c++)
+		{
+			walls[r].push_back(root["walls"][index].asInt());
+			index++;
+		}
+	}
+
 }
 
 
@@ -181,6 +113,9 @@ void DungeonMap::initializeScene()
 
 	// NOTE/TODO this method assumes that the width and height are the same for all three layer vectors.
 	// if that changes this needs to be adapted (though there any plans to change that really)
+
+	// make the scaling more adjustable and put it in the json
+
 	for (int r = 0; r < width; r++)
 	{
 		for (int c = 0; c < height; c++)
@@ -188,8 +123,8 @@ void DungeonMap::initializeScene()
 			if (walls[r][c] != 0)
 			{
 				ISceneNode * tmp = device->getSceneManager()->addCubeSceneNode();
-				tmp->setPosition( {c * scaling, 0, r * -scaling} );
-				tmp->setScale( {scaling/10, scaling/10, scaling/10} );
+				tmp->setPosition( {c * scaling.X, 0, r * -scaling.Z} );
+				tmp->setScale( {scaling.X/10, 2 * scaling.Y/10, scaling.Z/10} );
 				tmp->setMaterialFlag(video::EMF_LIGHTING, false);
 
 				core::stringw img = texturePath.c_str();
@@ -197,13 +132,20 @@ void DungeonMap::initializeScene()
 				img += textureExtension.c_str();
 
 				tmp->setMaterialTexture(0, device->getVideoDriver()->getTexture(img));
+
+
+				//temp
+				// TODO figure out why textures are blurry at odd angles and distances
+				tmp->getMaterial(0).TextureLayer[0].LODBias = 2.f;
+
+
 			}
 
 			if (floor[r][c] != 0)
 			{
 				ISceneNode * tmp = device->getSceneManager()->addCubeSceneNode();
-				tmp->setPosition( {c * scaling, -scaling, r * -scaling} );
-				tmp->setScale( {scaling/10, scaling/10, scaling/10} );
+				tmp->setPosition( {c * scaling.X, -scaling.Y, r * -scaling.Z} );
+				tmp->setScale( {scaling.X/10, scaling.Y/10, scaling.Z/10} );
 				tmp->setMaterialFlag(video::EMF_LIGHTING, false);
 
 				core::stringw img = texturePath.c_str();
@@ -211,13 +153,19 @@ void DungeonMap::initializeScene()
 				img += textureExtension.c_str();
 
 				tmp->setMaterialTexture(0, device->getVideoDriver()->getTexture(img));
+
+				//temp
+				// TODO figure out why textures are blurry at odd angles and distances
+				tmp->getMaterial(0).TextureLayer[0].LODBias = 2.f;
 			}
 
+			/* TEMP
+			* // TODO put ceiling a bit higher
 			if (ceiling[r][c] != 0)
 			{
 				ISceneNode * tmp = device->getSceneManager()->addCubeSceneNode();
-				tmp->setPosition( {c * scaling, scaling, r * -scaling} );
-				tmp->setScale( {scaling/10, scaling/10, scaling/10} );
+				tmp->setPosition( {c * scaling.X, scaling.Y, r * -scaling.Z} );
+				tmp->setScale( {scaling.X/10, scaling.Y/10, scaling.Z/10} );
 				tmp->setMaterialFlag(video::EMF_LIGHTING, false);
 
 				core::stringw img = texturePath.c_str();
@@ -226,11 +174,15 @@ void DungeonMap::initializeScene()
 
 				tmp->setMaterialTexture(0, device->getVideoDriver()->getTexture(img));
 			}
+			*/
+			
 			
 		}
 	}
 
 	// add the skybox
+	// TODO im not sure if the "top left back front right left" stuff should be hardcoded
+	// though its probably not worth working around in this case
 	irr::scene::ISceneNode *skybox = device->getSceneManager()->addSkyBoxSceneNode(
 		device->getVideoDriver()->getTexture((skyboxPath + "top" + skyboxExtension).c_str()),
 		device->getVideoDriver()->getTexture((skyboxPath + "bottom" + skyboxExtension).c_str()),
@@ -246,30 +198,47 @@ irr::core::vector3df DungeonMap::getStartPosition()
 	return startPosition;
 }
 
+irr::core::vector3df DungeonMap::getCamStartPosition()
+{
+	return camStartPosition;
+}
+
 Directions::Value DungeonMap::getStartFacing()
 {
 	return startFacing;
 }
 
-float DungeonMap::getScaling()
+irr::core::vector3df DungeonMap::getScaling()
 {
 	return scaling;
 }
 
 bool DungeonMap::isWallsPositionEmpty(irr::core::vector2df position)
 {
-	// TODO get rid of possible loss of data warning here
-	irr::u32 row = round(-position.Y / scaling);
-	irr::u32 col = round(position.X / scaling);
+	irr::u32 row = irr::u32(round(-position.Y / scaling.X));
+	irr::u32 col = irr::u32(round(position.X / scaling.Z));
 
-	if (walls[row][col] != 0)
+	if (row >= walls.size() || col >= walls[0].size())
 	{
+		DEBUG_MODE(std::cerr << "out of bounds position in isWallsPositionEmpty\n");
 		return false;
 	}
 	else
 	{
-		return true;
+		if (walls[row][col] != 0)
+		{
+			return false;
+		}
+		else
+		{
+			return true;
+		}
 	}
+}
+
+irr::core::vector3df DungeonMap::getPosition(int x, int y)
+{
+	return {scaling.X * x, 0, -scaling.Z * y};
 }
 
 float DungeonMap::getTurnSpeed()

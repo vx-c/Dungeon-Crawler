@@ -5,6 +5,11 @@
 DungeonState::DungeonState(irr::IrrlichtDevice &device, SoundManager &soundManager, const std::string &dungeonMapPath)
 	: dungeonMap(device, dungeonMapPath), soundManager(soundManager)
 {
+	using namespace irr;
+	using namespace scene;
+	using namespace core;
+	using namespace video;
+
 	nextState = GameStateType::DungeonState;
 	finished = false;
 	this->device = &device;
@@ -14,39 +19,6 @@ DungeonState::DungeonState(irr::IrrlichtDevice &device, SoundManager &soundManag
 	camera = nullptr;
 
 	keybinds = Keybinds();
-}
-
-void DungeonState::initializeScene()
-{
-	using namespace irr;
-	using namespace scene;
-	using namespace core;
-	using namespace video;
-
-	// set the mouse cursor invisible in this scene
-	device->getCursorControl()->setVisible(false);
-	
-	// initialize the dungeon map
-	dungeonMap.initializeScene();
-
-	// play the background music
-	soundManager.playMusic(MusicType::bgm);
-
-	// set the event receiver
-	eventReceiver = new MyEventReceiver(*this, *device);
-	device->setEventReceiver(eventReceiver);
-
-	// setup the camera
-	camera = this->device->getSceneManager()->getActiveCamera();
-	camera = device->getSceneManager()->addCameraSceneNode();
-	camera->setPosition(dungeonMap.getStartPosition());
-
-	// set the camera target
-	vector3df initialTarget;
-
-	Directions::Value initialDirection = dungeonMap.getStartFacing();
-
-	camera->setTarget(camera->getPosition() + directions.getVector(initialDirection));
 
 	// initial player state
 	playerState = PlayerState::standing;
@@ -54,6 +26,63 @@ void DungeonState::initializeScene()
 	radiansRotated = 0;
 	moveProgress = 0;
 	wallBumped = false;
+
+	playerPosition = vector3df({0,0,0});
+
+}
+
+DungeonState::~DungeonState()
+{
+	delete eventReceiver;
+	eventReceiver = nullptr;
+}
+
+void DungeonState::initializeScene(bool totalReset)
+{
+	using namespace irr;
+	using namespace scene;
+	using namespace core;
+	using namespace video;
+
+	// initialize the dungeon map
+	dungeonMap.initializeScene();
+
+	// set the mouse cursor invisible in this scene
+	device->getCursorControl()->setVisible(false);
+
+	// play the background music
+	soundManager.playMusic(MusicType::Bgm);
+
+	// set the event receiver
+	eventReceiver = new MyEventReceiver(*this, *device);
+	device->setEventReceiver(eventReceiver);
+
+
+	// setup the camera
+	camera = this->device->getSceneManager()->getActiveCamera();
+	camera = device->getSceneManager()->addCameraSceneNode();
+
+	vector3df camPosition;
+	vector3df initialTarget;
+	Directions::Value initialDirection;
+	
+	if (totalReset)
+	{
+		camPosition = dungeonMap.getCamStartPosition();
+		playerPosition = dungeonMap.getStartPosition();
+
+		initialDirection = dungeonMap.getStartFacing();
+	}
+	else
+	{
+		camPosition = dungeonMap.getPosition(playerPosition.X, playerPosition.Z);
+
+		initialDirection = playerFacing;
+	}
+	camera->setPosition(camPosition);
+	camera->setTarget(camera->getPosition() + directions.getVector(initialDirection));
+
+	// TODO add lighting
 }
 
 
@@ -86,12 +115,10 @@ void DungeonState::update(float deltaTime)
 		break;
 
 	case PlayerState::wallBumpForward:
-		// TODO don't harcode the distance
 		wallBump(dungeonMap.getBumpDistance(), dungeonMap.getBumpSpeed(), deltaTime, playerFacing);
 		break;
 
 	case PlayerState::wallBumpBackward:
-		// TODO don't harcode the distance
 		wallBump(dungeonMap.getBumpDistance(), dungeonMap.getBumpSpeed(), deltaTime, directions.getReverse(playerFacing));
 		break;
 	}
@@ -140,13 +167,13 @@ void DungeonState::handleInput(float deltaTime)
 {
 	using namespace irr;
 
-	// TODO add some sort of action buffer or stack so that keys hit during player actions aren't totally ignored
+	// 	add some sort of action buffer or stack so that keys hit during player actions aren't totally ignored
 
 	if (eventReceiver->IsKeyDown(keybinds.turnLeft))
 	{
 		if (playerState == PlayerState::standing)
 		{
-			soundManager.makeSound(SoundType::turn);
+			soundManager.makeSound(SoundType::Turn);
 			playerState = PlayerState::turningLeft;
 		}
 	}
@@ -154,7 +181,7 @@ void DungeonState::handleInput(float deltaTime)
 	{
 		if (playerState == PlayerState::standing)
 		{
-			soundManager.makeSound(SoundType::turn);
+			soundManager.makeSound(SoundType::Turn);
 			playerState = PlayerState::turningRight;
 		}
 	}
@@ -162,31 +189,40 @@ void DungeonState::handleInput(float deltaTime)
 	{
 		if (isMoveValid(playerFacing))
 		{
-			soundManager.makeSound(SoundType::move);
+			soundManager.makeSound(SoundType::Move);
 			playerState = PlayerState::movingForward;
 		}
 		else
 		{
 			playerState = PlayerState::wallBumpForward;
-			soundManager.makeSound(SoundType::wallBump);
+			soundManager.makeSound(SoundType::WallBump);
 		}
 	}
 	if (eventReceiver->IsKeyDown(keybinds.moveBackward) && playerState == PlayerState::standing)
 	{
 		if (isMoveValid(directions.getReverse(playerFacing)))
 		{
-			soundManager.makeSound(SoundType::move);
+			soundManager.makeSound(SoundType::Move);
 			playerState = PlayerState::movingBackward;
 		}
 		else
 		{
 			playerState = PlayerState::wallBumpBackward;
-			soundManager.makeSound(SoundType::wallBump);
+			soundManager.makeSound(SoundType::WallBump);
 		}
 	}
 	if (eventReceiver->IsKeyDown(keybinds.exitGame))
 	{
 		device->closeDevice();
+	}
+
+	// TEMP for testing
+	if (eventReceiver->IsKeyDown(keybinds.startBattle))
+	{
+		/* TEMP
+		nextState = GameStateType::BattleState;
+		std::cout << "battle key clicked\n";
+		*/
 	}
 
 }
@@ -199,7 +235,9 @@ void DungeonState::move(float speed, float deltaTime, Directions::Value directio
 	vec.normalize();
 	vec = vec * dungeonMap.getScaling() * (deltaTime / speed);
 
-	if (vec.getLength() + moveProgress >= dungeonMap.getScaling())
+	// NOTE the getScaling.X here assumes that XZ scaling are the same which they always will be as of right now
+	// I can't imagine any reason to change that because it would make the game feel terrible but I should mention it either way
+	if (vec.getLength() + moveProgress >= dungeonMap.getScaling().X)
 	{
 		// were done moving
 		vec = directions.getVector(direction).normalize();
@@ -208,6 +246,8 @@ void DungeonState::move(float speed, float deltaTime, Directions::Value directio
 		translateCamera(vec);
 		playerState = PlayerState::standing;
 		moveProgress = 0;
+
+		playerPosition = directions.getVector(direction) + playerPosition;
 	}
 	else
 	{
@@ -333,8 +373,6 @@ void DungeonState::wallBump(float distance, float speed, float deltaTime, Direct
 			playerState = PlayerState::standing;
 			moveProgress = 0;
 			wallBumped = false;;
-
-			std::cout << camera->getPosition().X << ", " << camera->getPosition().Z << std::endl;
 		}
 		else
 		{
@@ -342,6 +380,12 @@ void DungeonState::wallBump(float distance, float speed, float deltaTime, Direct
 			moveProgress += vec.getLength();
 		}
 	}
+}
+
+void DungeonState::readyStateChange()
+{
+	resetNextState();
+	eventReceiver->ResetKeys();
 }
 
 // MyEventReceiver functions ////////////////////////////////////////////////////////////
@@ -373,6 +417,14 @@ bool DungeonState::MyEventReceiver::IsKeyDown(irr::EKEY_CODE keyCode) const
 	return keyIsDown[keyCode];
 }
 
+void DungeonState::MyEventReceiver::ResetKeys()
+{
+	for (irr::u32 i = 0; i < irr::KEY_KEY_CODES_COUNT; ++i)
+	{
+		keyIsDown[i] = false;
+	}
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////
 
 // Keybinds functions ///////////////////////////////////////////////////////////////////
@@ -387,6 +439,9 @@ DungeonState::Keybinds::Keybinds()
 	turnLeft = KEY_LEFT;
 	turnRight = KEY_RIGHT;
 	exitGame = KEY_ESCAPE;
+
+	// TEMP for testing
+	startBattle = irr::KEY_KEY_B;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

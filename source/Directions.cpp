@@ -1,8 +1,37 @@
 #include "Directions.h"
 
+#include <uberswitch/uberswitch.hpp>
+
+#include <iostream>
+
+#include "DebugMacro.h"
+
 Directions::Directions()
 {
 
+}
+
+Directions::Value Directions::stringToValue(std::string str)
+{
+
+	uberswitch(str)
+	{
+		case ("west"):
+			return Value::West;
+
+		case ("east"):
+			return Value::East;
+
+		case ("north"):
+			return Value::North;
+
+		case ("south"):
+			return Value::South;
+
+		default:
+			std::cerr << "invalid string in Directions::stringToValue\n";
+			return Value::North;
+	}
 }
 
 Directions::Value Directions::getLeft(Value &facing)

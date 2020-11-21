@@ -18,7 +18,7 @@ MainMenuState::MainMenuState(irr::IrrlichtDevice &device)
 }
 
 
-void MainMenuState::initializeScene()
+void MainMenuState::initializeScene(bool totalReset)
 {
 	// add buttons
 	// TODO center the buttons and make the main menu pretty
@@ -66,7 +66,6 @@ void MainMenuState::preRender()
 
 
 // MyEventReceiver functions ////////////////////////////////////////////////////////////
-
 MainMenuState::MyEventReceiver::MyEventReceiver(MainMenuState &parent, irr::IrrlichtDevice &device)
 	: parent(parent), device(&device)
 {
@@ -86,6 +85,7 @@ bool MainMenuState::MyEventReceiver::OnEvent(const irr::SEvent &event)
 			{
 			case GUI_ID_START_BUTTON:
 				DEBUG_MODE(std::cout << "start clicked\n");
+				// TEMPORARY WERE USING THIS TO TEST COMBAT
 				parent.nextState = GameStateType::DungeonState;
 				return true;
 			
@@ -96,14 +96,10 @@ bool MainMenuState::MyEventReceiver::OnEvent(const irr::SEvent &event)
 				return true;
 			
 			}
-			
-			
+				
 		}
-
 	}
 
 	return false;
-
 }
-
 /////////////////////////////////////////////////////////////////////////////////////////

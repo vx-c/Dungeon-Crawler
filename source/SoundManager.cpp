@@ -8,7 +8,11 @@
 
 #include <map>
 
-#include <uberswitch/uberswitch.hpp>
+#include <json/json.h>
+
+#include "MyJson.h"
+
+#include "DebugMacro.h"
 
 SoundManager::SoundManager()
 {
@@ -17,49 +21,25 @@ SoundManager::SoundManager()
 
 void SoundManager::initialize(const std::string& soundsPath)
 {
-	std::ifstream myfile (soundsPath);
+	std::ifstream file(soundsPath, std::ifstream::binary);
 
-	std::string token;
+	Json::Value root;
 
-	std::string path;
+	file >> root;
 
-	float volume;
+	loadMusic(MusicType::Bgm, root["bgm"].asString(), root["bgmVolume"].asFloat());
 
-	while (myfile >> token)
-	{
-		uberswitch(token)
-		{
-			case ("#comment"):
-				while (myfile >> token)
-				{
-					if (token == "#comment")
-					{
-						break;
-					}
-				}
-				break;
+	DEBUG_MODE(MyJson::checkValid(root, "moveSound"));
+	DEBUG_MODE(MyJson::checkValid(root, "moveVolume"));
+	loadSound(SoundType::Move, root["moveSound"].asString(), root["moveVolume"].asFloat());
+	
+	DEBUG_MODE(MyJson::checkValid(root, "turnSound"));
+	DEBUG_MODE(MyJson::checkValid(root, "turnVolume"));
+	loadSound(SoundType::Turn, root["turnSound"].asString(), root["turnVolume"].asFloat());
 
-			case ("bgm"):
-				myfile >> path >> volume;
-				loadMusic(MusicType::bgm, path, volume);
-				break;
-
-			case ("move"):
-				myfile >> path >> volume;
-				loadSound(SoundType::move, path, volume);
-				break;
-
-			case ("turn"):
-				myfile >> path >> volume;
-				loadSound(SoundType::turn, path, volume);
-				break;
-
-			case ("wallBump"):
-				myfile >> path >> volume;
-				loadSound(SoundType::wallBump, path, volume);
-				break;
-		}
-	}
+	DEBUG_MODE(MyJson::checkValid(root, "wallBumpSound"));
+	DEBUG_MODE(MyJson::checkValid(root, "wallBumpVolume"));
+	loadSound(SoundType::WallBump, root["wallBumpSound"].asString(), root["wallBumpVolume"].asFloat());
 }
 
 
@@ -92,8 +72,6 @@ void SoundManager::loadMusic(MusicType music, std::string path, float volume)
 
 sf::Sound SoundManager::makeSound(SoundType sound)
 {
-	printf("making sound\n");
-
 	// TODO deal with out of bounds exception
 	sounds.push(sf::Sound());
 
