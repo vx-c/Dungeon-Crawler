@@ -2,6 +2,8 @@
 
 #include <irrlicht.h>
 
+#include <iostream>
+
 struct Directions
 {
 	enum class Value
@@ -22,5 +24,8 @@ struct Directions
 
 	// returns a unit vector in the direction of the facing parameter
 	irr::core::vector3df getVector(Value &facing);
+
+	// convert a string to a Directions::Value
+	Value stringToValue(std::string str);
 
 };

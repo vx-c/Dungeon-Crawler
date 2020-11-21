@@ -9,12 +9,12 @@
 
 enum class SoundType
 {
-	move, turn, wallBump
+	Move, Turn, WallBump
 };
 
 enum class MusicType
 {
-	bgm
+	Bgm
 };
 
 class SoundManager

@@ -47,7 +47,7 @@ public:
 	MainMenuState(irr::IrrlichtDevice &device);
 
 	// load assets, start the state
-	void initializeScene();
+	void initializeScene(bool totalReset);
 
 	// update, should be called once per frame, deltatime is in seconds
 	void update(float deltaTime);

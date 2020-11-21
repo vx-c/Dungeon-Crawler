@@ -24,6 +24,9 @@ class Game
 	PauseMenuState *pauseMenuState;
 	BattleState *battleState;
 
+	// player data
+	std::vector<PlayerUnit> party;
+
 	// for calculating deltatime
 	sf::Clock clock;
 	float lastTime;

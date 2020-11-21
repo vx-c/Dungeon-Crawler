@@ -14,10 +14,13 @@ protected:
 
 	irr::IrrlichtDevice *device;
 
+	// resets the nextState
+	void resetNextState();
+
 public:
 
 	// load assets, start the state
-	virtual void initializeScene() = 0;
+	virtual void initializeScene(bool totalReset) = 0;
 
 	// update, should be called once per frame, deltaTime in seconds
 	virtual void update(float deltaTime) = 0;
@@ -31,14 +34,13 @@ public:
 	// the state for the next frame
 	virtual GameStateType getNextState();
 
-	/* resets the nextState, this is needed because of when and how irrlicht handles events
-	* call this function after the rendering is finished */
-	void resetNextState();
-
 	// returns the GameState type
 	virtual GameStateType type() = 0;
 
 	// prepare device to be rendered
 	virtual void preRender() = 0;
+
+	// clean up whatever needs to be done before the state changes to something else
+	virtual void readyStateChange();
 };
 

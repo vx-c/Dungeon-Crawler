@@ -10,7 +10,10 @@ class DungeonState :
 	// loads and stores keybind information
 	struct Keybinds
 	{
-		irr::EKEY_CODE moveForward, moveBackward, turnLeft, turnRight, exitGame; 
+		irr::EKEY_CODE moveForward, moveBackward, turnLeft, turnRight, exitGame;
+		
+		// TEMP for testing
+		irr::EKEY_CODE startBattle;
 
 		Keybinds();
 	};
@@ -42,6 +45,9 @@ class DungeonState :
 		// used to tell if a key is being held down
 		virtual bool IsKeyDown(irr::EKEY_CODE keyCode) const;
 
+		// resets all key presses
+		void ResetKeys();
+
 	};
 
 	Keybinds keybinds;
@@ -56,6 +62,7 @@ class DungeonState :
 	PlayerState playerState;
 	irr::scene::ICameraSceneNode *camera;
 	Directions::Value playerFacing;
+	irr::core::vector3df playerPosition; // TODO this should be 2d
 
 	Directions directions;
 
@@ -98,9 +105,10 @@ class DungeonState :
 public:
 
 	DungeonState(irr::IrrlichtDevice &device, SoundManager &soundManager, const std::string &dungeonMapPath);
+	~DungeonState();
 
 	// load assets, start the state
-	void initializeScene();
+	void initializeScene(bool totalReset);
 
 	// update, should be called once per frame, deltatime is in seconds
 	void update(float deltaTime);
@@ -119,5 +127,8 @@ public:
 
 	// handle player input
 	void handleInput(float deltaTime);
+
+	// clean up whatever needs to be done before the state changes to something else
+	void readyStateChange();
 };
 

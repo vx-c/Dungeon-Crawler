@@ -22,9 +22,11 @@ class DungeonMap
 
 	// coordinate related
 	irr::core::vector3df startPosition;
+	irr::core::vector3df camStartPosition;
 	Directions::Value startFacing;
 	int width, height;
-	float scaling, cameraHeight;
+	float cameraHeight;
+	irr::core::vector3df scaling;
 
 	// player action speeds
 	float turnSpeed, moveSpeed, wallBumpSpeed;
@@ -45,11 +47,17 @@ public:
 	// get the start position of the player
 	irr::core::vector3df getStartPosition();
 
+	// get the start position of the camera
+	irr::core::vector3df getCamStartPosition();
+
 	// get the direction the player starts facing
 	Directions::Value getStartFacing();
 
 	// get the scaling of the dungeon
-	float getScaling();
+	irr::core::vector3df getScaling();
+
+	// get the camera position for a given point on the map
+	irr::core::vector3df getPosition(int x, int y);
 
 	// checks if a position in the walls grid is empty 
 	bool isWallsPositionEmpty(irr::core::vector2df position);
