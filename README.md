@@ -28,5 +28,5 @@ coming soon
 - Better game assets (right now its all placeholders).
 - Inventory menu with usable items and character equipment.
 - Skills that hit multiple targets
-- Healing skills
-- More monster variety
+- Healing skills.
+- More monster variety.
