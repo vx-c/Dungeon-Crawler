@@ -30,3 +30,4 @@ coming soon
 - Skills that hit multiple targets
 - Healing skills.
 - More monster variety.
+- Attack animations and sound effects.
