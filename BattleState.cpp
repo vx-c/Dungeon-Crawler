@@ -274,11 +274,16 @@ void BattleState::initializeUnitInfo()
 
         updateEnemyGui();
 
-	// set the player units hp text color
 	for (auto u : playerUnits)
 	{
-		u->hpText->setOverrideColor(video::SColor(255,255,0,0));
-	}
+                if (!u->dead)
+                {
+	        	u->hpText->setOverrideColor(video::SColor(255,255,0,0));
+                }
+
+                gui->addStaticText(u->name, 10,10, 200, 200);
+        }
+
 
 	// skills menu
 	skillsList = gui->addListBox(rect<s32>(100, 100, 300, 400), 0, -1, true);
@@ -324,8 +329,8 @@ void BattleState::updateEnemyGui()
 
             if (!enemyUnits[i].dead)
             {   
-                driver->draw2DImage(enemyUnits[i].fullbodyImage, {x + i*xinc,150}, 
-                    irr::core::rect<irr::s32>(0,0,128,166), 0, 
+                driver->draw2DImage(enemyUnits[i].fullbodyImage, {x + i*xinc, 150}, 
+                    irr::core::rect<irr::s32>(0,0,101,200), 0, 
                     irr::video::SColor(255,255,255,255), true);
 		
                 // hp text

@@ -104,7 +104,7 @@ void Action::executeFireball() const
 
 	for (size_t i = 0; i < targets.size(); ++i)
 	{
-		targets[i]->currentStats.hp -= actingUnit.currentStats.intelligence;
+		targets[i]->currentStats.hp -= actingUnit.currentStats.intelligence + 5;
 	}
 }
 
@@ -114,7 +114,7 @@ void Action::executeCleave() const
 
 	for (size_t i = 0; i < targets.size(); ++i)
 	{
-		targets[i]->currentStats.hp -= actingUnit.currentStats.strength;
+		targets[i]->currentStats.hp -= actingUnit.currentStats.strength + 5;
 	}
 }
 

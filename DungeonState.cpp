@@ -423,9 +423,9 @@ std::vector<EnemyUnit> DungeonState::getEnemies()
         //TODO generate enemies based on dungeon with rng
         std::vector<EnemyUnit> enemies;
 
-        enemies.push_back(EnemyUnit(L"Skeleton 1", Stats(30,10,3,3,1,60)));
-        enemies.push_back(EnemyUnit(L"Skeleton 2", Stats(30,10,3,3,2,60)));
-        enemies.push_back(EnemyUnit(L"Skeleton 3", Stats(30,10,3,3,3,60)));
+        enemies.push_back(EnemyUnit(L"Skeleton 1", Stats(10,10,3,3,1, 35)));
+        enemies.push_back(EnemyUnit(L"Skeleton 2", Stats(10,10,3,3,2, 35)));
+        enemies.push_back(EnemyUnit(L"Skeleton 3", Stats(10,10,3,3,3, 35)));
 
         return enemies;
 }
