@@ -7,7 +7,7 @@ A game I'm working on inspired by traditional first person dungeon crawler rpg t
 
 # Dungeon Controls
 - Press the 'up' and 'down' arrow keys to move 1 space forward or backward.
-- Press the 'left' and 'right' arrow keys to turn.
+- Press the 'left' and 'right' arrow keys to turn left or right.
 - Press 'escape' to close the game.
 - Press 'b' to force start a battle.
 
