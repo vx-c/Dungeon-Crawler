@@ -31,3 +31,6 @@ coming soon
 - Healing skills.
 - More monster variety.
 - Attack animations and sound effects.
+- More floors in the dungeon.
+- A town where the player can buy items and rest/save.
+- Party customization with classes and skill trees.
