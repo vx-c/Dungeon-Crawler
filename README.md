@@ -16,5 +16,5 @@ Press 'b' to force start a battle.
 # Linux Installation
 coming soon
 
-# Building from source
+# Building from Source
 coming soon
