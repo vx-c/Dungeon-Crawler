@@ -1,5 +1,5 @@
 # Dungeon-Crawler
-A project I'm currently working on inspired by traditional first person dungeon crawler rpg titles like Wizardry as well as more modern titles like Etrian Odyssey and Stranger of Sword City. The player can explore a 3D dungeon with a preset party of adventurers. Random battles with monsters will occur as the player navigates the maze. Combat is handled in fairly typical turn based dungeon rpg fashion.
+A game I'm working on inspired by traditional first person dungeon crawler rpg titles like Wizardry as well as more modern titles like Etrian Odyssey and Stranger of Sword City. The player can explore a 3D dungeon with a preset party of adventurers. Random battles with monsters will occur as the player navigates the maze. Combat is handled in fairly typical turn based dungeon rpg fashion.
 
 # Controls
 - Press the 'up' and 'down' arrow keys to move 1 space forward or backward.
