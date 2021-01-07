@@ -27,3 +27,6 @@ coming soon
 - Defend action in combat.
 - Better game assets (right now its all placeholders).
 - Inventory menu with usable items and character equipment.
+- Skills that hit multiple targets
+- Healing skills
+- More monster variety
