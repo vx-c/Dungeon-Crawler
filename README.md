@@ -1,7 +1,11 @@
 # Dungeon-Crawler
 A game I'm working on inspired by traditional first person dungeon crawler rpg titles like Wizardry as well as more modern titles like Etrian Odyssey and Stranger of Sword City. The player can explore a 3D dungeon with a preset party of adventurers. Random battles with monsters will occur as the player navigates the maze. Combat is handled in fairly typical turn based dungeon rpg fashion. 
 
-# Controls
+# Combat Controls
+- Press the right mouse button to undo/cancel
+- Press the left mouse button to navigate the menus
+
+# Dungeon Controls
 - Press the 'up' and 'down' arrow keys to move 1 space forward or backward.
 - Press the 'left' and 'right' arrow keys to turn.
 - Press 'escape' to close the game.
