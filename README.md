@@ -20,5 +20,5 @@ coming soon
 coming soon
 
 # Planned Updates
-- Better game assets (right now the sounds and textures are all placeholders)
+- Better game assets (right now its all placeholders)
 - Inventory menu with usable items and character equipment
