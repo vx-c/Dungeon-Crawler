@@ -17,7 +17,7 @@ A game I'm working on inspired by traditional first person dungeon crawler rpg t
 3. Run game.exe in the extracted folder
 
 # Linux Installation
-1. Download the newest version at https://mega.nz/folder/I9kinTYT#8fotMszSfkvBstMwvxP3pw
+1. Download the newest version at https://mega.nz/folder/EpFG3RBL#EfyFxVYRRUsVY2CrvHIqhQ
 2. Unzip the downloaded file
 3. cd game-0.2-linux
 4. chmod +x game
