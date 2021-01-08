@@ -18,7 +18,13 @@ A game I'm working on inspired by traditional first person dungeon crawler rpg t
 4. Run game.exe in the unzipped folder.
 
 # Linux Installation
-coming soon
+You basically just need to download the game folder in /releases and run the game file.
+One way to do this is the following
+1. git clone https://github.com/vx-c/Dungeon-Crawler
+2. cp Dungeon-Crawler/releases/game-0.2-linux game-0.2-linux 
+3. cd game-0.2-linux
+4. chmod +x game
+5. ./game
 
 # Building from Source
 coming soon
