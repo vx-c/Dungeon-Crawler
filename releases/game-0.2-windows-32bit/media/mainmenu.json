@@ -1,0 +1,12 @@
+
+{
+	
+	"fontPath":	"media/gui/fonthaettenschweiler.bmp",
+	
+	"buttonTextColor": [255, 255, 255, 255],
+	
+	"buttonImage": "media/gui/button2.png",
+	"buttonPressedImage": "media/gui/button_pressed2.png"
+	
+}
+

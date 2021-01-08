@@ -1,0 +1,33 @@
+
+{
+	"fontPath":	"media/gui/fonthaettenschweiler.bmp",
+	
+	"buttonTextColor": [255, 255, 255, 255],
+	
+	"portraitPositions": [ [300,550], [450,550], [600,550], [750,550], [900,550] ],
+
+	"attackButtonText": "ATTACK",
+	"attackButtonRect": [100,100,200,150],
+	"attackButtonImage": "media/gui/button1.png",
+	"attackButtonPressedImage": "media/gui/button_pressed1.png",
+	
+	"defendButtonText": "DEFEND",
+	"defendButtonRect": [100, 200, 200, 250],
+	"defendButtonImage": "media/gui/button1.png",
+	"defendButtonPressedImage": "media/gui/button_pressed1.png",
+	
+	"skillsButtonText": "SKILLS",
+	"skillsButtonRect": [100, 300, 200, 350],
+	"skillsButtonImage": "media/gui/button1.png",
+	"skillsButtonPressedImage": "media/gui/button_pressed1.png",
+	
+	"itemsButtonText": "ITEMS",
+	"itemsButtonRect": [100, 400, 200, 450],
+	"itemsButtonImage": "media/gui/button1.png",
+	"itemsButtonPressedImage": "media/gui/button_pressed1.png",
+		
+	"escapeButtonText": "ESCAPE",
+	"escapeButtonRect": [100, 500, 200, 550],
+	"escapeButtonImage": "media/gui/button1.png",	
+	"escapeButtonPressedImage": "media/gui/button_pressed1.png"
+}

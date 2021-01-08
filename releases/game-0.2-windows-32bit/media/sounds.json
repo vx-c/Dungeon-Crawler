@@ -1,0 +1,16 @@
+{
+	"bgm": "media/sound/bgm.wav",
+	"bgmVolume": 15,
+
+        "battleMusic": "media/sound/battleMusic.wav",
+        "battleMusicVolume": 15,
+
+	"moveSound": "media/sound/footstep.flac", 
+	"moveVolume": 100,
+
+	"turnSound": "media/sound/footstep.flac",
+	"turnVolume": 100,
+
+	"wallBumpSound": "media/sound/bump.wav",
+	"wallBumpVolume": 100	
+}
