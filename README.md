@@ -12,7 +12,7 @@ A game I'm working on inspired by traditional first person dungeon crawler rpg t
 - Press 'b' to force start a battle.
 
 # Windows Installation
-1. Download the game from https://mega.nz/folder/l5dXAKZK#1M4c1KQ50qnpSEtqR0HNkQ 
+1. Download the folder for your release from https://mega.nz/folder/l5dXAKZK#1M4c1KQ50qnpSEtqR0HNkQ 
 2. Open the downloaded folder and run game.exe
 
 # Linux Installation
