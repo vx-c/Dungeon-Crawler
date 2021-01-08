@@ -24,9 +24,10 @@ A game I'm working on inspired by traditional first person dungeon crawler rpg t
 
 # Screenshots
 ![](screenshots/dungeon.png)
+![](screenshots/battle.png)
 
 # Building from Source
-![](screenshots/battle.png)
+coming soon
 
 # Planned Updates
 - Defend action in combat.
