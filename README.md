@@ -39,3 +39,4 @@ coming soon
 - More floors in the dungeon.
 - A town where the player can buy items and rest/save.
 - Party customization with classes and skill trees.
+- Keyboard controls in combat.
