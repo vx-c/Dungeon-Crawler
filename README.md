@@ -16,11 +16,14 @@ A game I'm working on inspired by traditional first person dungeon crawler rpg t
 2. Open the downloaded folder and run game.exe
 
 # Linux Installation
-1. Download the newest version at https://mega.nz/folder/EpFG3RBL#EfyFxVYRRUsVY2CrvHIqhQ
+1. Download the newest version at https://mega.nz/folder/l5dXAKZK#1M4c1KQ50qnpSEtqR0HNkQ
 2. Unzip the downloaded file
 3. cd game-0.2-linux
 4. chmod +x game
 5. ./game
+
+# Screenshots
+coming soon
 
 # Building from Source
 coming soon
