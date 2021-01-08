@@ -12,16 +12,13 @@ A game I'm working on inspired by traditional first person dungeon crawler rpg t
 - Press 'b' to force start a battle.
 
 # Windows Installation
-1. From the releases directory download the zip file for the version of your choice. Pick either the 32 or 64 bit version based on your computer. If you're unsure just get the 32 bit version.
-2. Unzip the folder.
-3. Store it where ever you want on your computer.
-4. Run game.exe in the unzipped folder.
+1. Download the newest version at https://mega.nz/folder/I9kinTYT#8fotMszSfkvBstMwvxP3pw
+2. Unzip the downloaded file
+3. Run game.exe in the extracted folder
 
 # Linux Installation
-You basically just need to download the game folder in /releases and run the game file.
-One way to do this is the following
-1. git clone https://github.com/vx-c/Dungeon-Crawler
-2. cp Dungeon-Crawler/releases/game-0.2-linux game-0.2-linux 
+1. Download the newest version at https://mega.nz/folder/I9kinTYT#8fotMszSfkvBstMwvxP3pw
+2. Unzip the downloaded file
 3. cd game-0.2-linux
 4. chmod +x game
 5. ./game
