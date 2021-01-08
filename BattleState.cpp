@@ -231,16 +231,19 @@ void BattleState::initializeUnitInfo()
 
 	// TODO don't hardcode these positions
 	// and make sure to put this in a for loop once they're no longer hard coded
-	playerUnits[0]->hpText = gui->addStaticText((std::to_wstring(playerUnits[0]->currentStats.hp) + L"HP").c_str(),
-		irr::core::rect<irr::s32>(300,530,450,600));
-	playerUnits[1]->hpText = gui->addStaticText((std::to_wstring(playerUnits[1]->currentStats.hp) + L"HP").c_str(),
-		irr::core::rect<irr::s32>(450,530,550,600));
-	playerUnits[2]->hpText = gui->addStaticText((std::to_wstring(playerUnits[2]->currentStats.hp) + L"HP").c_str(),
-		irr::core::rect<irr::s32>(600,530,700,600));
-	playerUnits[3]->hpText = gui->addStaticText((std::to_wstring(playerUnits[3]->currentStats.hp) + L"HP").c_str(),
-		irr::core::rect<irr::s32>(750,530,850,600));
-	playerUnits[4]->hpText = gui->addStaticText((std::to_wstring(playerUnits[4]->currentStats.hp) + L"HP").c_str(),
-		irr::core::rect<irr::s32>(900,530,1000,600));
+        int xBase = 300;
+        int xInc = 150;
+
+        for (int i = 0; i < playerUnits.size(); i++)
+        {
+            auto text = gui->addStaticText((playerUnits[i]->name).c_str(),
+		irr::core::rect<irr::s32>(xBase + i*xInc, 530, 420 + i*xInc, 600));
+            nameTexts.push_back(text);
+
+            playerUnits[i]->hpText = gui->addStaticText((
+                    std::to_wstring(playerUnits[i]->currentStats.hp) + L"HP").c_str(), 
+                    irr::core::rect<irr::s32>(xBase + 105 + i*xInc, 530, 480 + i*xInc, 600));
+        }
 
         // TODO don't hardcode these paths
 	// add player unit portraits to the gui
@@ -280,10 +283,7 @@ void BattleState::initializeUnitInfo()
                 {
 	        	u->hpText->setOverrideColor(video::SColor(255,255,0,0));
                 }
-
-                gui->addStaticText(u->name, 10,10, 200, 200);
         }
-
 
 	// skills menu
 	skillsList = gui->addListBox(rect<s32>(100, 100, 300, 400), 0, -1, true);

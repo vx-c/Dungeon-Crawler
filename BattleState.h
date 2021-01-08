@@ -94,6 +94,7 @@ class BattleState :
 	std::vector<irr::gui::IGUIButton*> targetSelectButtons;
 	irr::gui::IGUIStaticText *actionText;
 	irr::gui::IGUIListBox *skillsList;
+        std::vector<irr::gui::IGUIStaticText*> nameTexts;
 
 	// action related
         std::stack<Unit *> lastActors; // keeps track of the last actors in order 
