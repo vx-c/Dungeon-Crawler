@@ -18,6 +18,7 @@ enum class MusicType
         Battle
 };
 
+// manages sound effects and music
 class SoundManager
 {
 	std::map<SoundType, sf::SoundBuffer> buffers;
@@ -41,7 +42,7 @@ public:
 	void loadMusic(MusicType music, std::string path, float volume = 100);
 
 	// make, play, and return an sf::sound object for the sound effect
-	sf::Sound makeSound(SoundType sound);
+	sf::Sound& makeSound(SoundType sound);
 
 	// play and return music
 	sf::Music& playMusic(MusicType music);

@@ -429,6 +429,7 @@ void BattleState::executeNextAction()
         // TODO retarget actions for multi targeting
 
         action->execute();
+
         actionText->setText(action->getText().c_str());
 
         // check if any of the targets died
