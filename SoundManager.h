@@ -23,7 +23,7 @@ class SoundManager
 	std::map<SoundType, sf::SoundBuffer> buffers;
 	std::map<SoundType, float> soundVolumes;
 
-	// we use this to keep the sounds from exiting scope while they are playing
+	// we need to store the sounds here so they don't exit out of scope while they are playing
 	std::queue<sf::Sound> sounds;
 
 	std::map<MusicType, sf::Music*> musics;
