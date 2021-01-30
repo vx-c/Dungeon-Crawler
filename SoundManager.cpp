@@ -41,7 +41,7 @@ void SoundManager::initialize(const std::string& soundsPath)
                 get(root, "turnVolume").asFloat());
 
 	loadSound(SoundType::WallBump, get(root, "wallBumpSound").asString(), 
-                root["wallBumpVolume"].asFloat());
+                get(root, "wallBumpVolume").asFloat());
 }
 
 
